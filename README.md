@@ -1,93 +1,194 @@
-# E-Voting System Usin Blockchain
+# E-Voting System Using Blockchain Technology
 
-## Overview
+## Introduction
 
-The E-Voting System is a secure and transparent voting platform designed specifically for university students. It allows students to participate in various elections such as club elections and student council elections through a mobile application. The system ensures the integrity and anonymity of votes by leveraging blockchain technology.
+This project is an **E-Voting System** that leverages **Blockchain Technology** to ensure secure, transparent, and immutable voting processes. The system is designed to simulate university elections, including clubs, student councils, and other types of elections. It consists of a **mobile application** for general users and candidates, and a **web platform** for administrators.
+
+---
 
 ## Features
 
 ### General User Features
-1. **User Registration & Authentication**:
-   - Sign up using university email.
-   - Email verification.
-   - One account per user.
 
-2. **Election Listing**:
-   - View upcoming and ongoing elections.
-   - Detailed election information displayed.
+- **User Registration & Authentication**
+  - Sign up using university email (`{StudentUniversityNumber}@student.birzeit.edu`).
+  - Email verification via a code sent to the university email.
+  - Single account per user enforcement.
+  - Secure login with verified credentials.
 
-3. **Search & Filter Elections**:
-   - Search elections by type (e.g., club, council).
-   - Filter based on user eligibility.
+- **Election Listing**
+  - View ongoing and upcoming elections.
+  - Elections displayed with details: title, type, dates, and description.
+  - Ability to view election details on a separate page.
 
-4. **Profile Management**:
-   - View and update user details.
-   - Track election participation.
+- **Search & Filter Elections**
+  - Search elections by type (club, council, etc.).
+  - Elections filtered based on user eligibility (department, college).
+  - View election details even if ineligible to vote.
 
-5. **Election Interaction**:
-   - Like and comment on candidates' posts.
+- **Profile Page**
+  - View and update personal details (name, email, department).
+  - Update profile picture and bio.
+  - View participation history in elections.
+
+- **Election Interaction**
+  - View candidate posts in any election.
+  - Like and comment on posts if participating in the election.
 
 ### Candidate Features
-1. **Campaign Posts**:
-   - Create and publish campaign posts.
-   - View interactions (likes and comments) on posts.
 
-2. **Live Election Results**:
-   - View real-time voting counts.
+- **Campaign Posts**
+  - Create and publish multiple campaign posts (text and media).
+  - Posts visible to all users.
+  - Interactions (likes/comments) from eligible voters.
 
-3. **Profile Management**:
-   - Manage campaign-related profile information.
+- **Engagement Tracking**
+  - View likes and comments on campaign posts.
+  - Monitor audience engagement.
+
+- **Live Election Results**
+  - Access real-time voting counts.
+  - Compare performance with other candidates.
+
+- **Profile Management**
+  - Set up candidate profile with campaign details.
+  - Update background, goals, and policies.
 
 ### Admin Features
-1. **Admin Login**:
-   - Secure access to the admin platform.
 
-2. **Election Management**:
-   - Create, update, and delete elections.
-   - Manage candidate assignments.
+- **Admin Login**
+  - Secure authentication for administrators.
+  - Access to admin web platform.
 
-3. **Moderation & Monitoring**:
-   - Monitor election activities and content moderation.
+- **Election Management**
+  - Create new elections with eligibility criteria.
+  - Update or delete existing elections.
+  - Immediate reflection of changes in the mobile app.
 
-4. **Notifications**:
-   - Send notifications to users about elections and updates.
+- **Candidate Management**
+  - Assign users as candidates.
+  - Link candidates to specific elections.
+  - Disqualify candidates if necessary.
+
+- **Moderation & Monitoring**
+  - Monitor candidate posts and user interactions.
+  - Moderate content to ensure fairness.
+  - View voting results and election activities.
+
+- **Notifications**
+  - Send notifications to users.
+  - Inform about new elections and updates.
 
 ### Blockchain Integration
-1. **Secure Vote Storage**:
-   - Immutable transactions for votes.
-   - Private voter identity.
 
-2. **Immutable Election Results**:
-   - Store final results on the blockchain to prevent tampering.
+- **Vote Storage & Security**
+  - Securely store votes on the blockchain.
+  - Immutable transactions ensure integrity.
+  - Publicly verifiable votes with private voter identity.
 
-## Database Design
+- **Election Results on Blockchain**
+  - Store final results on the blockchain.
+  - Prevent modification of election outcomes.
+  - Ensure transparency and auditability.
 
-The database design consists of several tables to store relevant data, including:
+---
 
-- **Users**: Contains user details (name, email, role, etc.).
-- **Elections**: Stores election details (title, description, start/end dates, eligibility criteria).
-- **Candidates**: Links candidates to elections and their profiles.
-- **Posts**: Records candidate campaign posts.
-- **Votes**: Captures votes associated with elections.
-- **Comments**: Stores user comments on candidate posts.
-- **Likes**: Tracks likes on posts.
-- **Enrollment**: to track user's enrollments in different elections cohorts.
+## Technologies Used
 
-## Tech Stack
+- **Backend**: Spring Boot (Java)
+- **Frontend (Mobile App)**: React Native
+- **Frontend (Admin Web Platform)**: React.js
+- **Database**: Postgresql
+- **Blockchain**: Ethereum (using Web3j library)
+- **Authentication**: JWT Tokens
+- **Security**: Spring Security
+- **Others**:
+  - Hibernate (ORM)
+  - Maven (Build Tool)
+  - Docker (Containerization)
+  - Git & GitHub (Version Control)
 
-- **Backend**: Spring Boot
-- **Frontend**: 
-  - Mobile Application: Flutter
-  - Admin Web Application: React.js
-- **Database**: PostgreSQL
-- **Blockchain**: Ethereum
-- **APIs**: RESTful APIs for communication between frontend and backend.
-- **Version Control**: Git
+---
 
-## Getting Started
+## Architecture
 
-To run the application locally, follow these steps:
+The system follows a **Client-Server Architecture** with separate frontends for users and admins, and a backend API server.
 
-1. Clone the repository:
+- **Mobile Application**: Used by students and candidates for interaction with the system.
+- **Admin Web Platform**: Used by administrators to manage the system.
+- **API Server**: Handles all business logic and database interactions.
+- **Blockchain Network**: Records votes and election results for integrity.
+
+---
+
+## Database Schema
+
+The database schema includes tables for:
+
+- **Users**
+- **Roles**
+- **Faculties**
+- **Departments**
+- **Elections**
+- **Election Types**
+- **Candidates**
+- **Posts**
+- **Comments**
+- **Likes**
+- **Votes**
+- **Notifications**
+
+---
+
+## API Endpoints
+
+### General User Endpoints
+
+- **POST** `/api/auth/register` - Register a new user.
+- **POST** `/api/auth/verify-email` - Verify user email.
+- **POST** `/api/auth/login` - User login.
+- **GET** `/api/elections` - Get list of elections.
+- **GET** `/api/elections/{id}` - Get election details.
+- **GET** `/api/elections/search` - Search elections.
+- **GET** `/api/users/{id}` - Get user profile.
+- **PUT** `/api/users/{id}` - Update user profile.
+- **POST** `/api/elections/{id}/vote` - Cast a vote.
+- **GET** `/api/elections/{id}/results/blockchain` - Get blockchain results.
+
+### Candidate Endpoints
+
+- **POST** `/api/candidates/{id}/posts` - Create campaign post.
+- **GET** `/api/candidates/{id}/engagement` - View engagement metrics.
+- **PUT** `/api/candidates/{id}` - Update candidate profile.
+
+### Admin Endpoints
+
+- **POST** `/api/admin/auth/login` - Admin login.
+- **POST** `/api/admin/elections` - Create election.
+- **PUT** `/api/admin/elections/{id}` - Update election.
+- **DELETE** `/api/admin/elections/{id}` - Delete election.
+- **POST** `/api/admin/elections/{id}/candidates` - Assign candidate.
+- **DELETE** `/api/admin/candidates/{id}` - Disqualify candidate.
+- **GET** `/api/admin/candidates/{id}/activity` - View candidate activity.
+- **DELETE** `/api/admin/posts/{id}` - Remove candidate post.
+- **POST** `/api/admin/notifications` - Send notifications.
+- **POST** `/api/admin/elections/{id}/store-results` - Store results on blockchain.
+
+---
+
+## Installation and Setup
+
+### Prerequisites
+
+- **Java 17** or higher
+- **Node.js** (for frontend applications)
+- **Postgresql** Database
+- **Maven** Build Tool
+- **Docker** (optional, for containerization)
+
+### Backend Setup
+
+1. **Clone the repository**
+
    ```bash
-   git clone https://github.com/ZaidZitawi/E_Voting_System
+   git clone https://github.com/ZaidZitawi/E_Voting_System.git
