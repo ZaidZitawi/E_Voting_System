@@ -24,8 +24,6 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false, updatable = false)
+    @Column()
     private ZonedDateTime createdAt = ZonedDateTime.now();
-
-
 }

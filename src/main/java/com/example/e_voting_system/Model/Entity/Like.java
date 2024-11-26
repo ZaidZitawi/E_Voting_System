@@ -24,5 +24,4 @@ public class Like {
     @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt = ZonedDateTime.now();
 
-
 }

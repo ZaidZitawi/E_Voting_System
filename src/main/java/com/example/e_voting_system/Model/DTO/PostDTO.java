@@ -9,10 +9,10 @@ import java.time.ZonedDateTime;
 @Setter
 public class PostDTO {
     private Long postId;
-    private Long candidateId;
+    private Long candidate;
+    private Long electionId; 
     private String content;
     private String mediaUrl;
     private ZonedDateTime createdAt;
-
 }
 

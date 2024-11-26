@@ -12,7 +12,6 @@ public class ElectionDTO {
     private ZonedDateTime startDatetime;
     private ZonedDateTime endDatetime;
     private String imageUrl;
-    private Long createdBy;
     private Long facultyId;
     private Long departmentId;
     private Boolean isActive;

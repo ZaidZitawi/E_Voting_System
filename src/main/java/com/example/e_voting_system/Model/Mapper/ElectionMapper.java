@@ -3,51 +3,49 @@ package com.example.e_voting_system.Model.Mapper;
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
 import com.example.e_voting_system.Model.Entity.Election;
 import com.example.e_voting_system.Model.Entity.ElectionType;
-import com.example.e_voting_system.Model.Entity.User;
 import com.example.e_voting_system.Model.Entity.Faculty;
 import com.example.e_voting_system.Model.Entity.Department;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface ElectionMapper {
 
-    ElectionMapper INSTANCE = Mappers.getMapper(ElectionMapper.class);
-
-    // Mapping from Election entity to ElectionDTO with nested fields
-    @Mapping(source = "type", target = "typeId", qualifiedByName = "mapTypeId")
-    @Mapping(source = "createdBy", target = "createdBy", qualifiedByName = "mapUserId")
-    @Mapping(source = "faculty", target = "facultyId", qualifiedByName = "mapFacultyId")
-    @Mapping(source = "department", target = "departmentId", qualifiedByName = "mapDepartmentId")
+    // Mapping from Election entity to ElectionDTO
+    @Mapping(source = "type.typeId", target = "typeId")
+    @Mapping(source = "faculty.facultyId", target = "facultyId")
+    @Mapping(source = "department.departmentId", target = "departmentId")
     ElectionDTO toDTO(Election election);
 
-    // Mapping from ElectionDTO to Election entity with nested fields
-    @Mapping(target = "type.typeId", source = "typeId")
-    @Mapping(target = "createdBy.userId", source = "createdBy")
-    @Mapping(target = "faculty.facultyId", source = "facultyId")
-    @Mapping(target = "department.departmentId", source = "departmentId")
+    // Mapping from ElectionDTO to Election entity
+    @Mapping(target = "type", source = "typeId", qualifiedByName = "mapTypeFromId")
+    @Mapping(target = "faculty", source = "facultyId", qualifiedByName = "mapFacultyFromId")
+    @Mapping(target = "department", source = "departmentId", qualifiedByName = "mapDepartmentFromId")
     Election toEntity(ElectionDTO electionDTO);
 
-    // Custom mapping methods for nested field IDs
-    @Named("mapTypeId")
-    default Long mapTypeId(ElectionType type) {
-        return type != null ? type.getTypeId() : null;
+    // Custom mapping methods
+    @Named("mapTypeFromId")
+    default ElectionType mapTypeFromId(Long typeId) {
+        if (typeId == null) return null;
+        ElectionType type = new ElectionType();
+        type.setTypeId(typeId);
+        return type;
     }
 
-    @Named("mapUserId")
-    default Long mapUserId(User user) {
-        return user != null ? user.getUserId() : null;
+    @Named("mapFacultyFromId")
+    default Faculty mapFacultyFromId(Long facultyId) {
+        if (facultyId == null) return null;
+        Faculty faculty = new Faculty();
+        faculty.setFacultyId(facultyId);
+        return faculty;
     }
 
-    @Named("mapFacultyId")
-    default Long mapFacultyId(Faculty faculty) {
-        return faculty != null ? faculty.getFacultyId() : null;
-    }
-
-    @Named("mapDepartmentId")
-    default Long mapDepartmentId(Department department) {
-        return department != null ? department.getDepartmentId() : null;
+    @Named("mapDepartmentFromId")
+    default Department mapDepartmentFromId(Long departmentId) {
+        if (departmentId == null) return null;
+        Department department = new Department();
+        department.setDepartmentId(departmentId);
+        return department;
     }
 }

@@ -8,10 +8,11 @@ import java.time.ZonedDateTime;
 
 @Getter
 @Setter
-public class CommentDTO {
+public class CommentResponseDTO {
     private Long commentId;
     private Long userId;
-    private Long postId;
+    private String userName;
+    private String userProfilePicture;
     private String content;
     private ZonedDateTime createdAt;
 }

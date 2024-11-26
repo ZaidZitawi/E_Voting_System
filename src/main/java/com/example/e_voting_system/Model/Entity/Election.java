@@ -33,10 +33,6 @@ public class Election {
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "created_by")
-    private User createdBy;
-
-    @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 

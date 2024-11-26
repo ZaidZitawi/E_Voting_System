@@ -3,7 +3,6 @@ package com.example.e_voting_system.Controllers;
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
 import com.example.e_voting_system.Services.ElectionService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +42,18 @@ public class ElectionController {
         return ResponseEntity.ok(elections);
     }
 
-    // POST /elections - Create a new election (Admin only)
-    @PostMapping("/admin/create")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ElectionDTO> createElection(@Valid @RequestBody ElectionDTO electionDTO) {
-        ElectionDTO createdElection = electionService.createElection(electionDTO);
-        return ResponseEntity.ok(createdElection);
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<ElectionDTO>> filterElections(
+            @RequestParam(required = false) String faculty,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) Boolean upcoming,
+            @RequestParam(required = false) Boolean active) {
+
+        List<ElectionDTO> elections = electionService.filterElections(faculty, department, upcoming, active);
+        return ResponseEntity.ok(elections);
     }
+
+
+
 }

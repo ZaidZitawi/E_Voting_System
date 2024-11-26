@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,16 +16,24 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
+    // Existing relationship with Candidate
     @ManyToOne
     @JoinColumn(name = "candidate_id", nullable = false)
     private Candidate candidate;
+
+    // New direct relationship with Election
+    @ManyToOne
+    @JoinColumn(name = "election_id", nullable = false)
+    private Election election;
 
     @Column(nullable = false)
     private String content;
 
     private String mediaUrl;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private ZonedDateTime createdAt = ZonedDateTime.now();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments;
 }
