@@ -5,10 +5,7 @@ import com.example.e_voting_system.Exceptions.ResourceNotFoundException;
 import com.example.e_voting_system.Exceptions.UnauthorizedException;
 import com.example.e_voting_system.Model.DTO.CommentResponseDTO;
 import com.example.e_voting_system.Model.DTO.PostResponseDTO;
-import com.example.e_voting_system.Model.Entity.Candidate;
-import com.example.e_voting_system.Model.Entity.Comment;
-import com.example.e_voting_system.Model.Entity.Election;
-import com.example.e_voting_system.Model.Entity.Post;
+import com.example.e_voting_system.Model.Entity.*;
 import com.example.e_voting_system.Model.Mapper.CommentMapper;
 import com.example.e_voting_system.Model.Mapper.PostMapper;
 import com.example.e_voting_system.Repositories.*;
@@ -19,7 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
-
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,14 +28,23 @@ public class PostService {
     private final PostMapper postMapper;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
+    private final EligibilityService eligibilityService;
+    private final NotificationService notificationService;
+    private final FileUploadService fileUploadService;
     public PostService(PostRepository postRepository,
                        PostMapper postMapper,
                        CommentRepository commentRepository,
-                       LikeRepository likeRepository) {
+                       LikeRepository likeRepository,
+                       EligibilityService eligibilityService,
+                       NotificationService notificationService,
+                       FileUploadService fileUploadService) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.commentRepository = commentRepository;
         this.likeRepository=likeRepository;
+        this.eligibilityService = eligibilityService;
+        this.notificationService = notificationService;
+        this.fileUploadService = fileUploadService;
     }
 
     @Transactional
@@ -46,6 +52,16 @@ public class PostService {
         // Convert PostDTO to Post entity
         Post post = postMapper.toEntity(postDTO);
         post.setCreatedAt(ZonedDateTime.now());
+
+        // Handle media file upload
+        if (postDTO.getMedia() != null && !postDTO.getMedia().isEmpty()) {
+            try {
+                String mediaPath = fileUploadService.uploadFile(postDTO.getMedia(), "post_media");
+                post.setMediaUrl(mediaPath); // Save the file path to the database
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload media file", e);
+            }
+        }
 
         // Save Post entity
         Post savedPost = postRepository.save(post);
@@ -55,11 +71,22 @@ public class PostService {
 
         // Initialize fields for response
         postResponse.setCommentCount(0);       // No comments initially
-        postResponse.setLikeCount(0);              // No likes initially
+        postResponse.setLikeCount(0);          // No likes initially
         postResponse.setLikedByCurrentUser(false); // Set based on actual user interaction if needed
+
+        // Fetch users eligible to vote in the election
+        List<User> eligibleUsers = eligibilityService.getEligibleUsers(savedPost.getCandidate().getElection());
+
+        // Send notifications to eligible users
+        String message = savedPost.getCandidate().getUser().getName() +
+                " created a new post in the election \"" +
+                savedPost.getCandidate().getElection().getTitle() + "\".";
+        notificationService.notifyUsers(eligibleUsers, message);
 
         return postResponse;
     }
+
+
 
 
     public List<PostResponseDTO> getElectionPosts(Long electionId) {
@@ -80,7 +107,7 @@ public class PostService {
     }
 
 
-    public PostResponseDTO editPost(Long postId, PostDTO postDTO, String candidateEmail) {
+    public PostResponseDTO editPost(Long postId, PostDTO postDTO, String candidateEmail) throws IOException {
         // Find the post by ID
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
@@ -91,8 +118,9 @@ public class PostService {
         }
 
         // Update the post fields
+
         post.setContent(postDTO.getContent());
-        post.setMediaUrl(postDTO.getMediaUrl());
+        post.setMediaUrl(fileUploadService.uploadFile(postDTO.getMedia(), "post_media"));
 
         // Save the updated post
         Post updatedPost = postRepository.save(post);

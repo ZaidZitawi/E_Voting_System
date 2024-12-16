@@ -25,4 +25,7 @@ public class Notification {
     @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt = ZonedDateTime.now();
 
+    @Enumerated(EnumType.STRING)
+    private NotificationType type;
+
 }

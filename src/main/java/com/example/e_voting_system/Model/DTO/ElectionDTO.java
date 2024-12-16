@@ -8,7 +8,7 @@ public class ElectionDTO {
     private Long electionId;
     private String title;
     private String description;
-    private Long typeId;           // Keeping typeId, createdBy, etc., but map them later
+    private Long typeId;
     private ZonedDateTime startDatetime;
     private ZonedDateTime endDatetime;
     private String imageUrl;

@@ -9,6 +9,4 @@ import lombok.Setter;
 public class FacultyDTO {
     private Long facultyId;
     private String facultyName;
-
-
 }

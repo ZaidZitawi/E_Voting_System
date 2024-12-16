@@ -48,5 +48,10 @@ public class User {
     private String bio;
 
 
+
+    @Column
+    private String fcmToken;
+
+
 }
 

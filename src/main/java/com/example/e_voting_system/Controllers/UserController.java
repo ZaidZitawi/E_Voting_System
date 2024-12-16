@@ -9,6 +9,7 @@ import com.example.e_voting_system.Repositories.UserRepository;
 import com.example.e_voting_system.Services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
@@ -29,25 +30,25 @@ public class UserController {
     @PutMapping("/update/{id}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
-            @RequestBody UserUpdateDTO userUpdateDTO,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "bio", required = false) String bio,
+            @RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture,
             Principal principal) {
 
         // Get the email of the logged-in user from Principal
         String loggedInUserEmail = principal.getName();
 
-        // Fetch the logged-in user's ID from the database
         User loggedInUser = userRepository.findByEmail(loggedInUserEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Logged-in user not found"));
 
-        // Ensure the logged-in user can only update their own profile
         if (!loggedInUser.getUserId().equals(id)) {
             throw new UnauthorizedException("You are not authorized to update this profile");
         }
 
-        // Proceed with the update
-        UserDTO updatedUser = userService.updateUser(id, userUpdateDTO);
+        UserDTO updatedUser = userService.updateUser(id, name, bio, profilePicture);
         return ResponseEntity.ok(updatedUser);
     }
+
 
     // Get the profile of the logged-in user
     @GetMapping("/profile")
@@ -67,6 +68,14 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserProfileById(@PathVariable Long id) {
         UserDTO userDTO = userService.getUserProfileById(id);
         return ResponseEntity.ok(userDTO);
+    }
+
+
+    // Endpoint to update FCM token
+    @PutMapping("/{userId}/fcm-token")
+    public ResponseEntity<Void> updateFcmToken(@PathVariable Long userId, @RequestBody String fcmToken) {
+        userService.updateFcmToken(userId, fcmToken);
+        return ResponseEntity.noContent().build();
     }
 
 

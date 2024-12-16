@@ -22,4 +22,6 @@ public class Candidate {
 
     private String campaignDetails;
 
+    private String Party;
+
 }

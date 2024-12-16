@@ -108,6 +108,7 @@ public class UserRegistrationService {
         }
 
         User user = userOptional.get();
+        user.setProfilePicture("User.png");
         user.setVerified(true);
         user.setVerificationCode(null); // Clear the verification code
         user.setVerifiedAt(ZonedDateTime.now());

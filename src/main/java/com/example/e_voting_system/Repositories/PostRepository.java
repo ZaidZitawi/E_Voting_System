@@ -13,6 +13,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByElection_ElectionId(Long electionId);
 
+    List<Post> findByCandidate_CandidateId(Long candidateId);
+
+
 
 
 }

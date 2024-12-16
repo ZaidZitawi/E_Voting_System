@@ -41,4 +41,5 @@ public class Election {
     private Department department;
 
     private Boolean isActive = true;
+
 }

@@ -14,6 +14,13 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByPost_PostId(Long postId);
 
+
+    //find number of comments by post id
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.post.postId = :postId")
     int countByPost_PostId(@Param("postId") Long postId);
+
+
+    //find number of comments by election id
+    @Query("SELECT COUNT(c) FROM Comment c WHERE c.post.election.electionId = :electionId")
+    int countByElectionId(@Param("electionId") Long electionId);
 }
