@@ -17,7 +17,6 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private final String SECRET_KEY = "Z2VuZXJhbGNoaWVmbWVtYmVyZXF1aXBtZW50Z3VsZmVhc3lzb2hhdmV3YWdvbmh1Z2U=";
-    private final long JWT_EXPIRATION = 604800000L; // 7 days
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
@@ -25,6 +24,8 @@ public class JwtUtil {
     }
 
     public String generateToken(String email, Role role) {
+        // 7 days
+        long JWT_EXPIRATION = 172800000L; // 2 days
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role.getRoleName())

@@ -22,4 +22,8 @@ public class Candidate {
 
     private String campaignDetails;
 
+    @ManyToOne
+    @JoinColumn(name = "party_id", nullable = false)
+    private Party party;
+
 }

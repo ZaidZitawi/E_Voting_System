@@ -11,7 +11,9 @@ import java.util.List;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
+
+
     // Find departments by faculty
-    List<Department> findByFaculty_FacultyId(Long facultyId);
+    List<Department> findByFacultyFacultyId(Long facultyId);
 }
 

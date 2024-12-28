@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 @RestController
@@ -47,7 +48,7 @@ public class PostController {
     public ResponseEntity<PostResponseDTO> editPost(
             @PathVariable Long postId,
             @Valid @RequestBody PostDTO postDTO,
-            Principal principal) {
+            Principal principal) throws IOException {
         PostResponseDTO updatedPost = postService.editPost(postId, postDTO, principal.getName());
         return ResponseEntity.ok(updatedPost);
     }

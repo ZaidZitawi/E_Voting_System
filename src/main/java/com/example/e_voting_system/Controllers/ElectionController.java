@@ -2,10 +2,11 @@ package com.example.e_voting_system.Controllers;
 
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
 import com.example.e_voting_system.Services.ElectionService;
-import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,15 +44,26 @@ public class ElectionController {
     }
 
 
-    @GetMapping("/filter")
-    public ResponseEntity<List<ElectionDTO>> filterElections(
-            @RequestParam(required = false) String faculty,
-            @RequestParam(required = false) String department,
-            @RequestParam(required = false) Boolean upcoming,
-            @RequestParam(required = false) Boolean active) {
 
-        List<ElectionDTO> elections = electionService.filterElections(faculty, department, upcoming, active);
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ElectionDTO>> filterElections(
+            @RequestParam(required = false) Long faculty, // Changed to Long (facultyId)
+            @RequestParam(required = false) Long department, // Changed to Long (departmentId)
+            @RequestParam(required = false) Boolean upcoming,
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) Integer type, // Changed to Integer (typeId)
+            Pageable pageable) { // Added Pageable
+
+        Page<ElectionDTO> elections = electionService.filterElections(faculty, department, upcoming, active, type, pageable);
         return ResponseEntity.ok(elections);
+    }
+
+
+
+    @GetMapping("/featured")
+    public ResponseEntity<List<ElectionDTO>> getFeaturedElections(Authentication authentication) {
+        List<ElectionDTO> featuredElections = electionService.getFeaturedElections(authentication);
+        return ResponseEntity.ok(featuredElections);
     }
 
 
