@@ -47,7 +47,7 @@ public class CandidateService {
             dto.setCandidateId(candidate.getCandidateId());
             dto.setCandidateName(candidate.getUser().getName());
             dto.setProfilePicture(candidate.getUser().getProfilePicture());
-            dto.setParty(candidate.getParty());
+
             return dto;
         }).collect(Collectors.toList());
     }
@@ -75,9 +75,6 @@ public class CandidateService {
                 .mapToInt(post -> likeRepository.countByElectionId(post.getElection().getElectionId()))
                 .sum();
         candidateDTO.setTotalLikes(totalLikes);
-
-        int totalVotes = voteRepository.countByCandidate_CandidateId(candidateId);
-        candidateDTO.setTotalVotes(totalVotes);
 
         return candidateDTO;
     }

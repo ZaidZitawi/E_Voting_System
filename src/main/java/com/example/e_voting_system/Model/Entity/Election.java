@@ -30,6 +30,7 @@ public class Election {
     @Column(nullable = false)
     private ZonedDateTime endDatetime;
 
+
     private String imageUrl;
 
     @ManyToOne
@@ -41,5 +42,8 @@ public class Election {
     private Department department;
 
     private Boolean isActive = true;
+
+    @Column(name = "transaction_hash")
+    private String transactionHash;
 
 }

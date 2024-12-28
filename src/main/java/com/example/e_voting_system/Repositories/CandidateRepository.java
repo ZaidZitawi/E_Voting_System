@@ -17,8 +17,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
     List<Candidate> findByElection_ElectionId(Long electionId);
 
-    @Query("SELECT COUNT(v) FROM Vote v WHERE v.candidate.candidateId = :candidateId")
-    int countVotesByCandidateId(@Param("candidateId") Long candidateId);
+
 
 
 

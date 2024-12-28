@@ -23,8 +23,8 @@ public class Vote {
     private Election election;
 
     @ManyToOne
-    @JoinColumn(name = "candidate_id", nullable = false)
-    private Candidate candidate;
+    @JoinColumn(name = "party_id", nullable = false)
+    private Party party;
 
     @Column(nullable = false)
     private String transactionHash;
