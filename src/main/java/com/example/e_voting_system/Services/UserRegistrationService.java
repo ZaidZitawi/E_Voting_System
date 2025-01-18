@@ -13,7 +13,7 @@ import com.example.e_voting_system.Repositories.DepartmentRepository;
 import com.example.e_voting_system.Repositories.FacultyRepository;
 import com.example.e_voting_system.Repositories.RoleRepository;
 import com.example.e_voting_system.Repositories.UserRepository;
-import com.example.e_voting_system.Security.JwtUtil;
+import com.example.e_voting_system.Utils.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

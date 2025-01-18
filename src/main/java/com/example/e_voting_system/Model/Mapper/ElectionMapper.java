@@ -1,6 +1,7 @@
 package com.example.e_voting_system.Model.Mapper;
 
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
+import com.example.e_voting_system.Model.DTO.ElectionDTO2;
 import com.example.e_voting_system.Model.Entity.Election;
 import com.example.e_voting_system.Model.Entity.ElectionType;
 import com.example.e_voting_system.Model.Entity.Faculty;
@@ -23,6 +24,18 @@ public interface ElectionMapper {
     @Mapping(target = "faculty", source = "facultyId", qualifiedByName = "mapFacultyFromId")
     @Mapping(target = "department", source = "departmentId", qualifiedByName = "mapDepartmentFromId")
     Election toEntity(ElectionDTO electionDTO);
+
+    // Mapping from Election entity to ElectionDTO2
+    @Mapping(source = "type.typeId", target = "typeId")
+    @Mapping(source = "faculty", target = "faculty")
+    @Mapping(source = "department", target = "department")
+    ElectionDTO2 toDTO2(Election election);
+
+    // Mapping from ElectionDTO2 to Election entity
+    @Mapping(target = "type", source = "typeId", qualifiedByName = "mapTypeFromId")
+    @Mapping(target = "faculty", source = "faculty")
+    @Mapping(target = "department", source = "department")
+    Election toEntity2(ElectionDTO2 electionDTO2);
 
     // Custom mapping methods
     @Named("mapTypeFromId")

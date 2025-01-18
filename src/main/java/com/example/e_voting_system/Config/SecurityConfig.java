@@ -56,7 +56,11 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/auth/faculties",
                                 "/auth/faculties/**",
-                                "/uploads/**"
+                                "/uploads/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "swagger-ui/index.html",
+                                "http://localhost:8080/api/swagger-ui/index.html"
                         ).permitAll() // Public endpoints
 
                         // Role-based access control

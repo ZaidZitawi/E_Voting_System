@@ -32,4 +32,7 @@ public class Vote {
     @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt = ZonedDateTime.now();
 
+    @Column(nullable = false, length = 100)
+    private String characterName;
+
 }

@@ -1,4 +1,4 @@
-package com.example.e_voting_system.Security;
+package com.example.e_voting_system.Utils;
 
 import com.example.e_voting_system.Model.Entity.Role;
 import io.jsonwebtoken.Claims;
