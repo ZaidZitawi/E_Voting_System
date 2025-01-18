@@ -3,6 +3,7 @@ package com.example.e_voting_system.Services;
 
 import com.example.e_voting_system.Exceptions.ResourceNotFoundException;
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
+import com.example.e_voting_system.Model.DTO.ElectionDTO2;
 import com.example.e_voting_system.Model.Entity.*;
 import com.example.e_voting_system.Model.Mapper.ElectionMapper;
 import com.example.e_voting_system.Repositories.*;
@@ -90,8 +91,8 @@ public class ElectionService {
         return electionMapper.toDTO(savedElection);
     }
 
-    // Updated filterElections method with pagination
-    public Page<ElectionDTO> filterElections(Long faculty, Long department, Boolean upcoming, Boolean active, Integer type, Pageable pageable) {
+    // filterElections method with pagination
+    public Page<ElectionDTO2> filterElections(Long faculty, Long department, Boolean upcoming, Boolean active, Integer type, Pageable pageable) {
         Specification<Election> spec = Specification.where(null);
 
         if (faculty != null) {
@@ -110,7 +111,7 @@ public class ElectionService {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("type").get("typeId"), type));
         }
 
-        return electionRepository.findAll(spec, pageable).map(electionMapper::toDTO);
+        return electionRepository.findAll(spec, pageable).map(electionMapper::toDTO2);
     }
 
 

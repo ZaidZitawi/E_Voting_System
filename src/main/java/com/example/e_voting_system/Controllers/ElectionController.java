@@ -1,6 +1,7 @@
 package com.example.e_voting_system.Controllers;
 
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
+import com.example.e_voting_system.Model.DTO.ElectionDTO2;
 import com.example.e_voting_system.Services.ElectionService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class ElectionController {
 
 
     @GetMapping("/filter")
-    public ResponseEntity<Page<ElectionDTO>> filterElections(
+    public ResponseEntity<Page<ElectionDTO2>> filterElections(
             @RequestParam(required = false) Long faculty, // Changed to Long (facultyId)
             @RequestParam(required = false) Long department, // Changed to Long (departmentId)
             @RequestParam(required = false) Boolean upcoming,
@@ -54,7 +55,7 @@ public class ElectionController {
             @RequestParam(required = false) Integer type, // Changed to Integer (typeId)
             Pageable pageable) { // Added Pageable
 
-        Page<ElectionDTO> elections = electionService.filterElections(faculty, department, upcoming, active, type, pageable);
+        Page<ElectionDTO2> elections = electionService.filterElections(faculty, department, upcoming, active, type, pageable);
         return ResponseEntity.ok(elections);
     }
 

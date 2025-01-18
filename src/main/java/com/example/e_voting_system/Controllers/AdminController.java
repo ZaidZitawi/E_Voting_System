@@ -49,13 +49,8 @@ public class AdminController {
     @PostMapping("/parties/create-with-manager")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PartyDTO> createPartyWithManager(@Valid @RequestBody PartyDTO partyDTO) {
-
         PartyDTO createdParty = partyService.createParty(partyDTO);
-
-
         roleAssignmentService.assignPartyManagerRole(partyDTO.getCampaignManagerId());
-
-
         return ResponseEntity.ok(createdParty);
     }
 

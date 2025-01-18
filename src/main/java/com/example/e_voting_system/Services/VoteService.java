@@ -11,6 +11,7 @@ import com.example.e_voting_system.Repositories.VoteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+
 import java.math.BigInteger;
 
 @Service
@@ -21,55 +22,86 @@ public class VoteService {
     private final UserRepository userRepository;
     private final ElectionRepository electionRepository;
     private final PartyRepository partyRepository;
+    private final EligibilityService eligibilityService;
+    private final SillyNameService sillyNameService;
 
     public VoteService(
             VotingSystem votingSystem,
             VoteRepository voteRepository,
             UserRepository userRepository,
             ElectionRepository electionRepository,
-            PartyRepository partyRepository) {
+            PartyRepository partyRepository,
+            EligibilityService eligibilityService,
+            SillyNameService sillyNameService
+    ) {
         this.votingSystem = votingSystem;
         this.voteRepository = voteRepository;
         this.userRepository = userRepository;
         this.electionRepository = electionRepository;
         this.partyRepository = partyRepository;
+        this.eligibilityService = eligibilityService;
+        this.sillyNameService = sillyNameService;
     }
 
+    /**
+     * Cast a vote by interacting with the blockchain and saving details in DB.
+     * @param email         The email (from JWT) of the user who is voting.
+     * @param electionId    The ID of the election.
+     * @param partyId       The ID of the party.
+     * @param characterName The character name assigned to the vote (could be "anonymous").
+     * @return             Transaction hash.
+     */
     @Transactional
-    public String castVote(Long voterId, Long electionId, Long partyId) throws Exception {
-        // Validate user
-        User voter = userRepository.findById(voterId)
-                .orElseThrow(() -> new IllegalArgumentException("Voter not found"));
+    public String castVote(String email, Long electionId, Long partyId, String characterName) throws Exception {
+        // 1. Validate user from email
+        User voter = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Voter not found by email: " + email));
 
-        // Validate election
+        // 2. Validate election
         Election election = electionRepository.findById(electionId)
                 .orElseThrow(() -> new IllegalArgumentException("Election not found"));
 
-        // Validate party
+        // 3. Validate party
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new IllegalArgumentException("Party not found"));
 
+        // 3a. Ensure the party belongs to the correct election
         if (!party.getElection().getElectionId().equals(electionId)) {
             throw new IllegalArgumentException("Party does not belong to the specified election");
         }
 
-        // Check for duplicate voting
+        // 4. Check if user already voted
         if (voteRepository.existsByVoterAndElection(voter, election)) {
             throw new IllegalArgumentException("Voter has already cast a vote in this election");
         }
 
-        // Interact with the blockchain
+        // 5. Check eligibility
+        boolean isEligible = eligibilityService.isUserEligibleForElection(voter, election);
+        if (!isEligible) {
+            throw new IllegalArgumentException("Voter is not eligible for this election based on faculty/department");
+        }
+
+        // 6. If characterName is "anonymous" or blank, pick a random silly name
+        if (characterName == null || characterName.trim().isEmpty()
+                || "anonymous".equalsIgnoreCase(characterName.trim())) {
+            characterName = sillyNameService.getRandomSillyName(); // or inline logic if you prefer
+        }
+
+        // 7. Interact with the blockchain
         TransactionReceipt receipt = votingSystem.castVote(
                 BigInteger.valueOf(electionId),
-                BigInteger.valueOf(partyId)
+                BigInteger.valueOf(partyId),
+                BigInteger.valueOf(voter.getUserId()),
+                characterName
         ).send();
 
-        // Save the vote in the database
+        // 8. Persist the vote (including the final character name)
         Vote vote = new Vote();
         vote.setVoter(voter);
         vote.setElection(election);
         vote.setParty(party);
         vote.setTransactionHash(receipt.getTransactionHash());
+        vote.setCharacterName(characterName); // new field in the DB
         voteRepository.save(vote);
 
         return receipt.getTransactionHash();

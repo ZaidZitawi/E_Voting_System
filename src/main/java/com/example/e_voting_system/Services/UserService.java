@@ -5,22 +5,10 @@ import com.example.e_voting_system.Model.DTO.*;
 import com.example.e_voting_system.Model.Entity.*;
 import com.example.e_voting_system.Model.Mapper.UserMapper;
 import com.example.e_voting_system.Repositories.*;
-import com.example.e_voting_system.Security.JwtUtil;
-import jakarta.transaction.Transactional;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {

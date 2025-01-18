@@ -87,12 +87,6 @@
           "internalType": "string",
           "name": "characterName",
           "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "voteCount",
-          "type": "uint256"
         }
       ],
       "name": "VoteCast",
