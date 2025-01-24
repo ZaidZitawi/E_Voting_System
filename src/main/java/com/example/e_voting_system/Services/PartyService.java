@@ -10,7 +10,9 @@ import com.example.e_voting_system.Repositories.PartyRepository;
 import com.example.e_voting_system.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PartyService {
@@ -51,5 +53,19 @@ public class PartyService {
 
         // Map Entity back to DTO and return
         return partyMapper.toDTO(savedParty);
+    }
+
+    public List<PartyDTO> getPartiesForElection(Long electionId) {
+        // Query the parties by electionId
+        List<Party> parties = partyRepository.findByElection_ElectionId(electionId);
+        // Convert to DTO
+        return parties.stream()
+                .map(partyMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PartyDTO getPartyById(Long partyId) {
+        Optional<Party> partyOpt = partyRepository.findById(partyId);
+        return partyOpt.map(partyMapper::toDTO).orElse(null);
     }
 }

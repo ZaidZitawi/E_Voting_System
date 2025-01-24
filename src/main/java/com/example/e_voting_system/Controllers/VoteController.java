@@ -1,11 +1,16 @@
 package com.example.e_voting_system.Controllers;
 
+import com.example.e_voting_system.Model.DTO.VoteDTO;
 import com.example.e_voting_system.Services.VoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/votes")
 public class VoteController {
@@ -44,4 +49,34 @@ public class VoteController {
                     .body("Error casting vote: " + e.getMessage());
         }
     }
+
+    /**
+     * Example: GET /votes/election/27/myVote
+     */
+    @GetMapping("/election/{electionId}/myVote")
+    public ResponseEntity<?> getMyVoteForElection(
+            @PathVariable Long electionId,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        try {
+            String email = userDetails.getUsername();
+            VoteDTO myVote = voteService.getMyVote(email, electionId);
+            if (myVote != null) {
+                return ResponseEntity.ok(myVote);
+            } else {
+                // response as object for a better handling brother!!!
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "no_vote");
+                response.put("message", "No vote found for the current user.");
+                return ResponseEntity.ok(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Error fetching vote: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+
 }

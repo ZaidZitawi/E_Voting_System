@@ -27,7 +27,7 @@ public class Candidate {
     private Party party;
 
     @ManyToOne
-    @JoinColumn(name = "candidate_role_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role candidateRole;
 
 }
