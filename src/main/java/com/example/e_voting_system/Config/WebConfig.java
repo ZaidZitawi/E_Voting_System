@@ -7,7 +7,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc // Optional: Only if you need full MVC configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${file.upload-dir}")

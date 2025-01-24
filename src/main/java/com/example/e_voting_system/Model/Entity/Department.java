@@ -19,8 +19,4 @@ public class Department {
     @ManyToOne
     @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
-
-
-
-
 }

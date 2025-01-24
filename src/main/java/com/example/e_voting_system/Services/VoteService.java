@@ -1,9 +1,11 @@
 package com.example.e_voting_system.Services;
 
+import com.example.e_voting_system.Model.DTO.VoteDTO;
 import com.example.e_voting_system.Model.Entity.Election;
 import com.example.e_voting_system.Model.Entity.Party;
 import com.example.e_voting_system.Model.Entity.User;
 import com.example.e_voting_system.Model.Entity.Vote;
+import com.example.e_voting_system.Model.Mapper.VoteMapper;
 import com.example.e_voting_system.Repositories.ElectionRepository;
 import com.example.e_voting_system.Repositories.PartyRepository;
 import com.example.e_voting_system.Repositories.UserRepository;
@@ -24,6 +26,7 @@ public class VoteService {
     private final PartyRepository partyRepository;
     private final EligibilityService eligibilityService;
     private final SillyNameService sillyNameService;
+    private final VoteMapper voteMapper;
 
     public VoteService(
             VotingSystem votingSystem,
@@ -32,7 +35,8 @@ public class VoteService {
             ElectionRepository electionRepository,
             PartyRepository partyRepository,
             EligibilityService eligibilityService,
-            SillyNameService sillyNameService
+            SillyNameService sillyNameService,
+            VoteMapper voteMapper
     ) {
         this.votingSystem = votingSystem;
         this.voteRepository = voteRepository;
@@ -41,6 +45,7 @@ public class VoteService {
         this.partyRepository = partyRepository;
         this.eligibilityService = eligibilityService;
         this.sillyNameService = sillyNameService;
+        this.voteMapper = voteMapper;
     }
 
     /**
@@ -106,4 +111,18 @@ public class VoteService {
 
         return receipt.getTransactionHash();
     }
+
+    public VoteDTO getMyVote(String email, Long electionId) {
+        // 1) Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found by email: " + email));
+
+        // 2) Find vote in DB
+        Vote vote = voteRepository.findByVoterAndElection(user.getUserId(), electionId);
+        if (vote == null) return null;
+
+        // 3) Convert to VoteDTO
+        return voteMapper.toDTO(vote);
+    }
+
 }
