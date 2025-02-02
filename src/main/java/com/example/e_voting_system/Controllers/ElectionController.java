@@ -2,7 +2,9 @@ package com.example.e_voting_system.Controllers;
 
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
 import com.example.e_voting_system.Model.DTO.ElectionDTO2;
+import com.example.e_voting_system.Repositories.UserRepository;
 import com.example.e_voting_system.Services.ElectionService;
+import com.example.e_voting_system.Services.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,9 +19,12 @@ import java.util.Optional;
 public class ElectionController {
 
     private final ElectionService electionService;
+    private final UserService userService;
 
-    public ElectionController(ElectionService electionService) {
+    public ElectionController(ElectionService electionService,
+                              UserService userService) {
         this.electionService = electionService;
+        this.userService = userService;
     }
 
     // GET /elections - Get all elections
@@ -68,5 +73,17 @@ public class ElectionController {
     }
 
 
+    @GetMapping("/participated")
+    public ResponseEntity<List<ElectionDTO>> getParticipatedElections(Authentication authentication) {
+        // Extract the username from the authentication object
+        String username = authentication.getName();
 
+        // Fetch user ID based on username
+        Long userId = userService.getUserProfileByEmail(username).getUserId();
+
+        // Fetch participated elections
+        List<ElectionDTO> participatedElections = electionService.getParticipatedElections(userId);
+
+        return ResponseEntity.ok(participatedElections);
+    }
 }

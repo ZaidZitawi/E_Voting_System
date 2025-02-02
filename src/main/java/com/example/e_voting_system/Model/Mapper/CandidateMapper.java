@@ -1,16 +1,13 @@
 package com.example.e_voting_system.Model.Mapper;
 
-
 import com.example.e_voting_system.Model.DTO.CandidateDTO;
+import com.example.e_voting_system.Model.DTO.CandidateSummaryDTO;
 import com.example.e_voting_system.Model.Entity.Candidate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper()
+@Mapper(componentModel = "spring")
 public interface CandidateMapper {
-
-    CandidateMapper INSTANCE = Mappers.getMapper(CandidateMapper.class);
 
     @Mapping(source = "user.name", target = "candidateName")
     @Mapping(target = "posts", ignore = true) // Posts should be populated separately
@@ -23,4 +20,10 @@ public interface CandidateMapper {
     @Mapping(target = "election", ignore = true) // Election is populated separately
     @Mapping(target = "candidateId", ignore = true) // ID is auto-generated
     Candidate toEntity(CandidateDTO candidateDTO);
+
+    @Mapping(source = "candidateId", target = "candidateId")
+    @Mapping(source = "user.name", target = "candidateName")
+    @Mapping(source = "user.profilePicture", target = "profilePicture")
+    @Mapping(source = "party.name", target = "party")
+    CandidateSummaryDTO toSummaryDTO(Candidate candidate);
 }

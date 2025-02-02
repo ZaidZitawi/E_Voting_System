@@ -35,4 +35,10 @@ public class CandidateController {
         return ResponseEntity.ok(candidates);
     }
 
+    @GetMapping("/party/{partyId}")
+    public ResponseEntity<List<CandidateSummaryDTO>> getCandidatesByParty(@PathVariable Long partyId) {
+        List<CandidateSummaryDTO> candidates = candidateService.getCandidatesByParty(partyId);
+        return ResponseEntity.ok(candidates);
+    }
+
 }

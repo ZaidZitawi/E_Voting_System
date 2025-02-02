@@ -15,6 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
 
+
     //Searches the database for a user whose email field matches
     // the provided email and whose verificationCode field matches the provided verification code.
     Optional<User> findByEmailAndVerificationCode(String email, String verificationCode);
