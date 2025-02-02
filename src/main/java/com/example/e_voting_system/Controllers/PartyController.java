@@ -17,10 +17,9 @@ public class PartyController {
         this.partyService = partyService;
     }
 
-    /**
-     * Returns a list of parties belonging to a specific election.
-     * For example: GET /parties/election/27
-     */
+
+      //Returns a list of parties belonging to a specific election.
+      //For example: GET /parties/election/27
     @GetMapping("/election/{electionId}")
     public ResponseEntity<List<PartyDTO>> getPartiesForElection(@PathVariable Long electionId) {
         List<PartyDTO> parties = partyService.getPartiesForElection(electionId);

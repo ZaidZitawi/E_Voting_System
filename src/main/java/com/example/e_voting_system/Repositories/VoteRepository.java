@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
     boolean existsByVoterAndElection(User voter, Election election);
@@ -16,5 +18,7 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     @Query("SELECT v FROM Vote v WHERE v.voter.userId = :userId AND v.election.electionId = :electionId")
     Vote findByVoterAndElection(@Param("userId") Long userId, @Param("electionId") Long electionId);
 
+    @Query("SELECT v FROM Vote v WHERE v.voter = :voter")
+    List<Vote> findAllByVoter(@Param("voter") User voter);
 
 }

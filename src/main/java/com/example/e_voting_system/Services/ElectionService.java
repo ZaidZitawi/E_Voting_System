@@ -33,6 +33,7 @@ public class ElectionService {
     private final EligibilityService eligibilityService;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
 
     public ElectionService(ElectionRepository electionRepository,
                            ElectionMapper electionMapper,
@@ -41,7 +42,8 @@ public class ElectionService {
                            DepartmentRepository departmentRepository,
                            EligibilityService eligibilityService,
                            NotificationService notificationService,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           VoteRepository voteRepository) {
         this.electionRepository = electionRepository;
         this.electionMapper = electionMapper;
         this.electionTypeRepository= electionTypeRepository;
@@ -50,6 +52,7 @@ public class ElectionService {
         this.eligibilityService = eligibilityService;
         this.notificationService = notificationService;
         this.userRepository=userRepository;
+        this.voteRepository = voteRepository;
     }
 
     // Get all elections
@@ -213,5 +216,24 @@ public class ElectionService {
         return featuredElections.stream()
                 .map(electionMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+
+    public List<ElectionDTO> getParticipatedElections(Long userId) {
+        // Fetch the user entity
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        // Fetch all votes by the user
+        List<Vote> votes = voteRepository.findAllByVoter(user);
+
+        // Extract unique elections from votes
+        List<ElectionDTO> participatedElections = votes.stream()
+                .map(Vote::getElection)
+                .distinct()
+                .map(electionMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return participatedElections;
     }
 }

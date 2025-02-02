@@ -21,10 +21,10 @@ public class VoteController {
         this.voteService = voteService;
     }
 
-    /**
-     * Endpoint to cast a vote.
-     * We'll derive the voter from JWT token, so no voterId param needed.
-     */
+
+    // Endpoint to cast a vote.
+    //We'll derive the voter from JWT token, so no voterId param needed.
+
     @PostMapping("/cast")
     public ResponseEntity<String> castVote(
             @RequestParam Long electionId,
@@ -33,7 +33,7 @@ public class VoteController {
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         try {
-            // 1) Derive email (or ID) from userDetails
+            // 1) Derive email  from userDetails
             String email = userDetails.getUsername();
             // Or if you have a custom principal storing user ID, you can get it directly
 
@@ -50,9 +50,10 @@ public class VoteController {
         }
     }
 
-    /**
-     * Example: GET /votes/election/27/myVote
-     */
+
+
+    // Example: GET /votes/election/27/myVote
+
     @GetMapping("/election/{electionId}/myVote")
     public ResponseEntity<?> getMyVoteForElection(
             @PathVariable Long electionId,

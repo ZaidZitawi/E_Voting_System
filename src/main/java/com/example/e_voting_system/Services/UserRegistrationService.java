@@ -88,8 +88,8 @@ public class UserRegistrationService {
                 .orElseThrow(() -> new Exception("Default role not found."));
         user.setRole(role);
 
-        // Generate verification code
-        String verificationCode = UUID.randomUUID().toString();
+        // Generate a 6-digit numeric verification code
+        String verificationCode = String.format("%06d", (int) (Math.random() * 1000000));
         user.setVerificationCode(verificationCode);
 
         // Save user to database

@@ -21,46 +21,39 @@ public class CandidateService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-    private final VoteRepository voteRepository;
     private final UserRepository userRepository;
-
+    private final CandidateMapper candidateMapper;
 
     public CandidateService(CandidateRepository candidateRepository, PostRepository postRepository,
-                            CommentRepository commentRepository, LikeRepository likeRepository,
-                            VoteRepository voteRepository, UserRepository userRepository) {
+                            CommentRepository commentRepository,
+                            LikeRepository likeRepository,
+                            UserRepository userRepository,
+                            CandidateMapper candidateMapper) {
         this.candidateRepository = candidateRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
-        this.voteRepository = voteRepository;
         this.userRepository = userRepository;
+        this.candidateMapper = candidateMapper;
     }
-
 
     public List<CandidateSummaryDTO> getCandidatesByElection(Long electionId) {
         // Fetch candidates for the given election
         List<Candidate> candidates = candidateRepository.findByElection_ElectionId(electionId);
 
-        // Map candidates to CandidateSummaryDTO
-        return candidates.stream().map(candidate -> {
-            CandidateSummaryDTO dto = new CandidateSummaryDTO();
-            dto.setCandidateId(candidate.getCandidateId());
-            dto.setCandidateName(candidate.getUser().getName());
-            dto.setProfilePicture(candidate.getUser().getProfilePicture());
-
-            return dto;
-        }).collect(Collectors.toList());
+        // Map candidates to CandidateSummaryDTO using candidateMapper
+        return candidates.stream()
+                .map(candidateMapper::toSummaryDTO)
+                .collect(Collectors.toList());
     }
-
-
 
     public CandidateDTO getCandidateDetails(Long candidateId) {
         // Fetch the candidate by ID
         Candidate candidate = candidateRepository.findById(candidateId)
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with ID: " + candidateId));
 
-        // Map candidate to CandidateDTO
-        CandidateDTO candidateDTO = CandidateMapper.INSTANCE.toDTO(candidate);
+        // Map candidate to CandidateDTO using candidateMapper
+        CandidateDTO candidateDTO = candidateMapper.toDTO(candidate);
 
         // Fetch and populate additional fields if needed
         List<Post> posts = postRepository.findByCandidate_CandidateId(candidateId);
@@ -79,7 +72,6 @@ public class CandidateService {
         return candidateDTO;
     }
 
-
     public void deleteCandidate(Long candidateId) {
         // Find the candidate by ID
         Candidate candidate = candidateRepository.findById(candidateId)
@@ -94,5 +86,12 @@ public class CandidateService {
 
         // Save the updated user
         userRepository.save(user);
+    }
+
+    public List<CandidateSummaryDTO> getCandidatesByParty(Long partyId) {
+        List<Candidate> candidates = candidateRepository.findByParty_PartyId(partyId);
+        return candidates.stream()
+                .map(candidateMapper::toSummaryDTO)
+                .collect(Collectors.toList());
     }
 }
