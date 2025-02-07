@@ -1,17 +1,13 @@
 package com.example.e_voting_system.Controllers;
 
-import com.example.e_voting_system.Model.DTO.CommentResponseDTO;
 import com.example.e_voting_system.Model.DTO.PostDTO;
 import com.example.e_voting_system.Model.DTO.PostResponseDTO;
 import com.example.e_voting_system.Services.PostService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -28,11 +24,37 @@ public class PostController {
 
     // Publish a new post (Candidate only)
     @PostMapping("candidate/createPost")
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasRole('CANDIDATE') || hasRole('PARTY_MANAGER')")
     public ResponseEntity<PostResponseDTO> publishPost(@Valid @RequestBody PostDTO postDTO) {
         PostResponseDTO postResponse = postService.createPost(postDTO);
         return ResponseEntity.ok(postResponse);
     }
+
+    // Get all posts with filtering parameters
+    @GetMapping("/all")
+    public ResponseEntity<Page<PostResponseDTO>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam Long userId,
+            @RequestParam(required = false) String faculty,   // Faculty filter (by name)
+            @RequestParam(required = false) String dateRange,   // e.g., "24h", "week", "month"
+            @RequestParam(required = false) String sortBy,      // "recent", "likes", "comments"
+            @RequestParam(required = false) String keyword      // Keyword to search in content
+    ) {
+        Page<PostResponseDTO> posts = postService.getAllPosts(page, size, userId, faculty, dateRange, sortBy, keyword);
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<PostResponseDTO>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam Long userId) {
+        Page<PostResponseDTO> posts = postService.getAllPosts(page, size, userId);
+        return ResponseEntity.ok(posts);
+    }
+
+
 
     // Fetch all posts for an election
     @GetMapping("/election/{electionId}/posts")
