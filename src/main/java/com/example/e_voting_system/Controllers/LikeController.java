@@ -27,12 +27,15 @@ public class LikeController {
     }
 
 
+
+    //like post
     @PostMapping("/posts/{postId}")
     public ResponseEntity<String> likePost(@PathVariable Long postId, @RequestParam Long userId) {
         likeService.likePost(postId, userId);
         return ResponseEntity.ok("Post liked successfully.");
     }
 
+    //unlike post
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<String> unlikePost(@PathVariable Long postId, @RequestParam Long userId) {
         likeService.unlikePost(postId, userId);

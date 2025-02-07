@@ -12,6 +12,7 @@ public interface VoteMapper{
     @Mapping(source = "voter.userId", target = "voterId")
     @Mapping(source = "election.electionId", target = "electionId")
     @Mapping(source = "party.partyId", target = "candidateId")
+    @Mapping(source = "characterName", target = "characterName")
     VoteDTO toDTO(Vote vote);
 
     @Mapping(source = "voterId", target = "voter.userId")

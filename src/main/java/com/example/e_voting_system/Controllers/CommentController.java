@@ -23,7 +23,7 @@ public class CommentController {
 
     // POST /comments - Add a comment to a post
     @PostMapping("/add")
-    @PreAuthorize("hasRole('USER') || hasRole('CANDIDATE')")
+    @PreAuthorize("hasRole('USER') || hasRole('CANDIDATE') || hasRole('PARTY_MANAGER') || hasRole('ADMIN')")
     public ResponseEntity<CommentResponseDTO> addComment(@Valid @RequestBody CommentDTO commentDTO) {
         CommentResponseDTO createdComment = commentService.addComment(commentDTO);
         return ResponseEntity.ok(createdComment);
@@ -36,10 +36,6 @@ public class CommentController {
         List<CommentResponseDTO> comments = commentService.getCommentsForPost(postId);
         return ResponseEntity.ok(comments);
     }
-
-
-
-
 
     /*You don’t pass the Principal directly from the frontend.
      Instead, the authentication token (e.g., JWT) is sent with each HTTP request,

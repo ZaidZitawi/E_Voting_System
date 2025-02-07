@@ -15,6 +15,5 @@ public class VoteDTO {
     private Long candidateId;
     private String transactionHash;
     private ZonedDateTime createdAt;
-
-    // Constructors, Getters, Setters
+    private String characterName;
 }
