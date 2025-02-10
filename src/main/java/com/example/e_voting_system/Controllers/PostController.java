@@ -30,13 +30,13 @@ public class PostController {
         return ResponseEntity.ok(postResponse);
     }
 
-    // Get all posts with filtering parameters
-    @GetMapping("/all")
+    // src/main/java/com/example/e_voting_system/Controllers/PostController.java
+    @GetMapping("/filterPosts")
     public ResponseEntity<Page<PostResponseDTO>> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam Long userId,
-            @RequestParam(required = false) String faculty,   // Faculty filter (by name)
+            @RequestParam(required = false) Long faculty,   // Now faculty filter is based on faculty id
             @RequestParam(required = false) String dateRange,   // e.g., "24h", "week", "month"
             @RequestParam(required = false) String sortBy,      // "recent", "likes", "comments"
             @RequestParam(required = false) String keyword      // Keyword to search in content
@@ -44,6 +44,7 @@ public class PostController {
         Page<PostResponseDTO> posts = postService.getAllPosts(page, size, userId, faculty, dateRange, sortBy, keyword);
         return ResponseEntity.ok(posts);
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<Page<PostResponseDTO>> getAllPosts(

@@ -16,7 +16,5 @@ public class Faculty {
     @Column(nullable = false, unique = true)
     private String facultyName;
 
-
-
 }
 
