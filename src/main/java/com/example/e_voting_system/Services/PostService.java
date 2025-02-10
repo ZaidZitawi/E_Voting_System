@@ -150,15 +150,15 @@ public class PostService {
     }
 
 
-    public Page<PostResponseDTO> getAllPosts(int page, int size, Long userId, String faculty, String dateRange, String sortBy, String keyword) {
+    public Page<PostResponseDTO> getAllPosts(int page, int size, Long userId, Long faculty, String dateRange, String sortBy, String keyword) {
         Specification<Post> spec = Specification.where(null);
 
-        // Filter by Faculty (from Election's Faculty name)
-        if (faculty != null && !faculty.trim().isEmpty()) {
+        // Filter by Faculty (using faculty id)
+        if (faculty != null) {
             spec = spec.and((root, query, cb) -> {
                 Join<Post, Election> electionJoin = root.join("election", JoinType.INNER);
                 Join<Election, Faculty> facultyJoin = electionJoin.join("faculty", JoinType.INNER);
-                return cb.equal(cb.lower(facultyJoin.get("name")), faculty.toLowerCase());
+                return cb.equal(facultyJoin.get("facultyId"), faculty);
             });
         }
 
@@ -190,18 +190,48 @@ public class PostService {
             );
         }
 
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")); // default sort: most recent
+        // Default sorting: most recent (by createdAt descending)
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+        // If a sort option is provided that uses custom queries (by likes or comments)
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             if (sortBy.equalsIgnoreCase("likes")) {
-                return postRepository.findAllOrderByLikes(pageable).map(postMapper::toResponseDTO);
+                return postRepository.findAllOrderByLikes(pageable).map(post -> {
+                    PostResponseDTO dto = postMapper.toResponseDTO(post);
+                    int likeCount = likeRepository.countByPost_PostId(post.getPostId());
+                    int commentCount = commentRepository.countByPost_PostId(post.getPostId());
+                    boolean likedByCurrentUser = likeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), userId);
+                    dto.setLikeCount(likeCount);
+                    dto.setCommentCount(commentCount);
+                    dto.setLikedByCurrentUser(likedByCurrentUser);
+                    return dto;
+                });
             } else if (sortBy.equalsIgnoreCase("comments")) {
-                return postRepository.findAllOrderByComments(pageable).map(postMapper::toResponseDTO);
+                return postRepository.findAllOrderByComments(pageable).map(post -> {
+                    PostResponseDTO dto = postMapper.toResponseDTO(post);
+                    int likeCount = likeRepository.countByPost_PostId(post.getPostId());
+                    int commentCount = commentRepository.countByPost_PostId(post.getPostId());
+                    boolean likedByCurrentUser = likeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), userId);
+                    dto.setLikeCount(likeCount);
+                    dto.setCommentCount(commentCount);
+                    dto.setLikedByCurrentUser(likedByCurrentUser);
+                    return dto;
+                });
             }
         }
 
+        // Use specifications if no custom sort is required
         Page<Post> postPage = postRepository.findAll(spec, pageable);
-        return postPage.map(postMapper::toResponseDTO);
+        return postPage.map(post -> {
+            PostResponseDTO dto = postMapper.toResponseDTO(post);
+            int likeCount = likeRepository.countByPost_PostId(post.getPostId());
+            int commentCount = commentRepository.countByPost_PostId(post.getPostId());
+            boolean likedByCurrentUser = likeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), userId);
+            dto.setLikeCount(likeCount);
+            dto.setCommentCount(commentCount);
+            dto.setLikedByCurrentUser(likedByCurrentUser);
+            return dto;
+        });
     }
 
 
