@@ -21,6 +21,7 @@ public interface CandidateMapper {
     @Mapping(target = "candidateId", ignore = true) // ID is auto-generated
     Candidate toEntity(CandidateDTO candidateDTO);
 
+    @Mapping(target = "userId", source = "user.userId")
     @Mapping(source = "candidateId", target = "candidateId")
     @Mapping(source = "user.name", target = "candidateName")
     @Mapping(source = "user.profilePicture", target = "profilePicture")

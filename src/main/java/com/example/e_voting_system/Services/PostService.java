@@ -94,18 +94,18 @@ public class PostService {
 
 
 
-    public List<PostResponseDTO> getElectionPosts(Long electionId) {
+    public List<PostResponseDTO> getElectionPosts(Long electionId, Long userId) {
         List<Post> posts = postRepository.findByElection_ElectionId(electionId);
         return posts.stream()
                 .map(post -> {
                     PostResponseDTO responseDTO = postMapper.toResponseDTO(post);
-
                     // Fetch counts for comments and likes
                     int commentCount = commentRepository.countByPost_PostId(post.getPostId());
                     int likeCount = likeRepository.countByPost_PostId(post.getPostId());
-
+                    boolean likedByCurrentUser = likeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), userId);
                     responseDTO.setCommentCount(commentCount);
                     responseDTO.setLikeCount(likeCount);
+                    responseDTO.setLikedByCurrentUser(likedByCurrentUser);
                     return responseDTO;
                 })
                 .collect(Collectors.toList());

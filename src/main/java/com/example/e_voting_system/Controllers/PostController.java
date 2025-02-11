@@ -60,8 +60,9 @@ public class PostController {
     // Fetch all posts for an election
     @GetMapping("/election/{electionId}/posts")
     public ResponseEntity<List<PostResponseDTO>> getAllPostsForElection(
-            @PathVariable Long electionId) {
-        List<PostResponseDTO> posts = postService.getElectionPosts(electionId);
+            @PathVariable Long electionId,
+            @RequestParam Long userId) {
+        List<PostResponseDTO> posts = postService.getElectionPosts(electionId, userId);
         return ResponseEntity.ok(posts);
     }
 

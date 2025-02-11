@@ -55,10 +55,8 @@ public class UserController {
     public ResponseEntity<UserDTO> getLoggedInUserProfile(Principal principal) {
         // Get the logged-in user's email from Principal
         String email = principal.getName();
-
         // Fetch the user's profile using the email
         UserDTO userDTO = userService.getUserProfileByEmail(email);
-
         return ResponseEntity.ok(userDTO);
     }
 
