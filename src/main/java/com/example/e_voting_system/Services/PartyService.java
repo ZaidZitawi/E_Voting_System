@@ -1,5 +1,6 @@
 package com.example.e_voting_system.Services;
 
+import com.example.e_voting_system.Exceptions.ResourceNotFoundException;
 import com.example.e_voting_system.Model.DTO.PartyDTO;
 import com.example.e_voting_system.Model.Entity.Election;
 import com.example.e_voting_system.Model.Entity.Party;
@@ -67,5 +68,11 @@ public class PartyService {
     public PartyDTO getPartyById(Long partyId) {
         Optional<Party> partyOpt = partyRepository.findById(partyId);
         return partyOpt.map(partyMapper::toDTO).orElse(null);
+    }
+
+    public PartyDTO getPartyByUserId(Long userId) {
+        Party party = partyRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Party not found for user ID: " + userId));
+        return partyMapper.toDTO(party);
     }
 }

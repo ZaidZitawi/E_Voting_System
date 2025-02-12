@@ -35,4 +35,10 @@ public class PartyController {
         else return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<PartyDTO> getPartyByUserId(@PathVariable Long userId) {
+        PartyDTO partyDTO = partyService.getPartyByUserId(userId);
+        return ResponseEntity.ok(partyDTO);
+    }
+
 }

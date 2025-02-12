@@ -20,4 +20,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     List<Candidate> findByParty_PartyId(Long partyId);
 
 
+    @Query("SELECT c FROM Candidate c WHERE c.user.userId = :userId")
+    Optional<Candidate> findByUserId(@Param("userId") Long userId);
 }

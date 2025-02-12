@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 public class PostDTO {
     private Long postId;
     private Long candidate;
+    private Long party;
     private Long electionId; 
     private String content;
     private MultipartFile media;
