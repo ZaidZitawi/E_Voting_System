@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class CandidateSummaryDTO {
     private Long candidateId;
+    private Long userId;
     private String candidateName;
     private String profilePicture;
     private String party;

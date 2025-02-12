@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ElectionRepository extends JpaRepository<Election, Long>, JpaSpecificationExecutor<Election> {
@@ -34,5 +35,12 @@ public interface ElectionRepository extends JpaRepository<Election, Long>, JpaSp
             "(:departmentId IS NULL OR e.department.departmentId = :departmentId)")
     List<Election> findByFacultyAndDepartment(@Param("facultyId") Long facultyId,
                                               @Param("departmentId") Long departmentId);
+
+
+    @Query("SELECT e.electionId FROM Election e JOIN e.parties p WHERE p.campaignManager.userId = :userId")
+    Optional<Long> findElectionIdByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c.election.electionId FROM Candidate c WHERE c.user.userId = :userId")
+    Optional<Long> findElectionIdByCandidateUserId(@Param("userId") Long userId);
 }
 

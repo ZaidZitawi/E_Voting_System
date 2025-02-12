@@ -94,4 +94,10 @@ public class CandidateService {
                 .map(candidateMapper::toSummaryDTO)
                 .collect(Collectors.toList());
     }
+
+    public CandidateDTO getCandidateByUserId(Long userId) {
+        Candidate candidate = candidateRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found for user ID: " + userId));
+        return candidateMapper.toDTO(candidate);
+    }
 }

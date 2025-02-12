@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -45,5 +46,8 @@ public class Election {
 
     @Column(name = "transaction_hash")
     private String transactionHash;
+
+    @OneToMany(mappedBy = "election")
+    private List<Party> parties;
 
 }

@@ -41,4 +41,10 @@ public class CandidateController {
         return ResponseEntity.ok(candidates);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CandidateDTO> getCandidateByUserId(@PathVariable Long userId) {
+        CandidateDTO candidateDTO = candidateService.getCandidateByUserId(userId);
+        return ResponseEntity.ok(candidateDTO);
+    }
+
 }

@@ -236,4 +236,14 @@ public class ElectionService {
 
         return participatedElections;
     }
+
+    public Long getElectionIdByUserId(Long userId) {
+        return electionRepository.findElectionIdByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Election not found for user ID: " + userId));
+    }
+
+    public Long getElectionIdByCandidateUserId(Long userId) {
+        return electionRepository.findElectionIdByCandidateUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Election not found for candidate user ID: " + userId));
+    }
 }

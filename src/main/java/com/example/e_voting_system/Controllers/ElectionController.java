@@ -86,4 +86,17 @@ public class ElectionController {
 
         return ResponseEntity.ok(participatedElections);
     }
+
+    @GetMapping("/user/{userId}/electionId")
+    public ResponseEntity<Long> getElectionIdByUserId(@PathVariable Long userId) {
+        Long electionId = electionService.getElectionIdByUserId(userId);
+        return ResponseEntity.ok(electionId);
+    }
+
+
+    @GetMapping("/candidate/user/{userId}/electionId")
+    public ResponseEntity<Long> getElectionIdByCandidateUserId(@PathVariable Long userId) {
+        Long electionId = electionService.getElectionIdByCandidateUserId(userId);
+        return ResponseEntity.ok(electionId);
+    }
 }

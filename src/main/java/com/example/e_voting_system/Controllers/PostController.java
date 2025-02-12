@@ -5,6 +5,7 @@ import com.example.e_voting_system.Model.DTO.PostResponseDTO;
 import com.example.e_voting_system.Services.PostService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,13 @@ public class PostController {
     }
 
     // Publish a new post (Candidate only)
-    @PostMapping("candidate/createPost")
+    @PostMapping(value = "/createPost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('CANDIDATE') || hasRole('PARTY_MANAGER')")
-    public ResponseEntity<PostResponseDTO> publishPost(@Valid @RequestBody PostDTO postDTO) {
+    public ResponseEntity<PostResponseDTO> publishPost(@Valid @ModelAttribute PostDTO postDTO) {
         PostResponseDTO postResponse = postService.createPost(postDTO);
         return ResponseEntity.ok(postResponse);
     }
+
 
     // src/main/java/com/example/e_voting_system/Controllers/PostController.java
     @GetMapping("/filterPosts")
@@ -60,8 +62,9 @@ public class PostController {
     // Fetch all posts for an election
     @GetMapping("/election/{electionId}/posts")
     public ResponseEntity<List<PostResponseDTO>> getAllPostsForElection(
-            @PathVariable Long electionId) {
-        List<PostResponseDTO> posts = postService.getElectionPosts(electionId);
+            @PathVariable Long electionId,
+            @RequestParam Long userId) {
+        List<PostResponseDTO> posts = postService.getElectionPosts(electionId, userId);
         return ResponseEntity.ok(posts);
     }
 

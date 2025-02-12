@@ -36,13 +36,15 @@ public class PostService {
     private final EligibilityService eligibilityService;
     private final NotificationService notificationService;
     private final FileUploadService fileUploadService;
+    private final ElectionRepository electionRepository;
     public PostService(PostRepository postRepository,
                        PostMapper postMapper,
                        CommentRepository commentRepository,
                        LikeRepository likeRepository,
                        EligibilityService eligibilityService,
                        NotificationService notificationService,
-                       FileUploadService fileUploadService) {
+                       FileUploadService fileUploadService,
+                       ElectionRepository electionRepository) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.commentRepository = commentRepository;
@@ -50,6 +52,7 @@ public class PostService {
         this.eligibilityService = eligibilityService;
         this.notificationService = notificationService;
         this.fileUploadService = fileUploadService;
+        this.electionRepository = electionRepository;
     }
 
     @Transactional
@@ -71,41 +74,45 @@ public class PostService {
         // Save Post entity
         Post savedPost = postRepository.save(post);
 
-        // Convert saved Post to PostResponseDTO
-        PostResponseDTO postResponse = postMapper.toResponseDTO(savedPost);
+        // Instead of using savedPost.getCandidate().getElection() which is partially mapped,
+        // fetch the full Election from the database:
+        Election fullElection = electionRepository.findById(postDTO.getElectionId())
+                .orElseThrow(() -> new ResourceNotFoundException("Election not found"));
 
-        // Initialize fields for response
-        postResponse.setCommentCount(0);       // No comments initially
-        postResponse.setLikeCount(0);          // No likes initially
-        postResponse.setLikedByCurrentUser(false); // Set based on actual user interaction if needed
+        // Now use fullElection for eligibility check
+        List<User> eligibleUsers = eligibilityService.getEligibleUsers(fullElection);
 
-        // Fetch users eligible to vote in the election
-        List<User> eligibleUsers = eligibilityService.getEligibleUsers(savedPost.getCandidate().getElection());
-
-        // Send notifications to eligible users
-        String message = savedPost.getCandidate().getUser().getName() +
+        // Build notification message based on the candidate's full details.
+        String candidateName = savedPost.getCandidate() != null && savedPost.getCandidate().getUser() != null
+                ? savedPost.getCandidate().getUser().getName()
+                : "A candidate";
+        String message = candidateName +
                 " created a new post in the election \"" +
-                savedPost.getCandidate().getElection().getTitle() + "\".";
+                fullElection.getTitle() + "\".";
         notificationService.notifyUsers(eligibleUsers, message);
 
+        PostResponseDTO postResponse = postMapper.toResponseDTO(savedPost);
+        postResponse.setCommentCount(0);
+        postResponse.setLikeCount(0);
+        postResponse.setLikedByCurrentUser(false);
         return postResponse;
     }
 
 
 
 
-    public List<PostResponseDTO> getElectionPosts(Long electionId) {
+    public List<PostResponseDTO> getElectionPosts(Long electionId, Long userId) {
         List<Post> posts = postRepository.findByElection_ElectionId(electionId);
         return posts.stream()
                 .map(post -> {
                     PostResponseDTO responseDTO = postMapper.toResponseDTO(post);
-
                     // Fetch counts for comments and likes
                     int commentCount = commentRepository.countByPost_PostId(post.getPostId());
                     int likeCount = likeRepository.countByPost_PostId(post.getPostId());
-
+                    boolean likedByCurrentUser = likeRepository.existsByPost_PostIdAndUser_UserId(post.getPostId(), userId);
                     responseDTO.setCommentCount(commentCount);
                     responseDTO.setLikeCount(likeCount);
+                    responseDTO.setLikedByCurrentUser(likedByCurrentUser);
                     return responseDTO;
                 })
                 .collect(Collectors.toList());
