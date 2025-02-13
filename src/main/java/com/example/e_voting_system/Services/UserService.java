@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -74,5 +77,23 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
         user.setFcmToken(fcmToken); // Update the FCM token
         userRepository.save(user); // Save the updated user
+    }
+
+    public Map<String, Object> getUserStatistics() {
+        Long totalUsers = userRepository.countTotalUsers();
+        List<Object[]> usersByRole = userRepository.countUsersByRole();
+
+        Map<String, Object> statistics = new HashMap<>();
+        statistics.put("totalUsers", totalUsers);
+
+        Map<String, Long> roleBreakdown = new HashMap<>();
+        for (Object[] result : usersByRole) {
+            String roleName = (String) result[0];
+            Long count = (Long) result[1];
+            roleBreakdown.put(roleName, count);
+        }
+        statistics.put("roleBreakdown", roleBreakdown);
+
+        return statistics;
     }
 }

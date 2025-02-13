@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.Map;
 
 
 @RestController
@@ -74,6 +75,12 @@ public class UserController {
     public ResponseEntity<Void> updateFcmToken(@PathVariable Long userId, @RequestBody String fcmToken) {
         userService.updateFcmToken(userId, fcmToken);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<Map<String, Object>> getUserStatistics() {
+        Map<String, Object> statistics = userService.getUserStatistics();
+        return ResponseEntity.ok(statistics);
     }
 
 
