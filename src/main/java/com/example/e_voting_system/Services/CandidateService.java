@@ -9,6 +9,7 @@ import com.example.e_voting_system.Model.Entity.Role;
 import com.example.e_voting_system.Model.Entity.User;
 import com.example.e_voting_system.Model.Mapper.CandidateMapper;
 import com.example.e_voting_system.Repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,18 +24,21 @@ public class CandidateService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final CandidateMapper candidateMapper;
+    private final RoleRepository roleRepository;
 
     public CandidateService(CandidateRepository candidateRepository, PostRepository postRepository,
                             CommentRepository commentRepository,
                             LikeRepository likeRepository,
                             UserRepository userRepository,
-                            CandidateMapper candidateMapper) {
+                            CandidateMapper candidateMapper,
+                            RoleRepository roleRepository) {
         this.candidateRepository = candidateRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
         this.candidateMapper = candidateMapper;
+        this.roleRepository=roleRepository;
     }
 
     public List<CandidateSummaryDTO> getCandidatesByElection(Long electionId) {
@@ -99,5 +103,25 @@ public class CandidateService {
         Candidate candidate = candidateRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate not found for user ID: " + userId));
         return candidateMapper.toDTO(candidate);
+    }
+
+
+    @Transactional
+    public void deleteCandidateById(Long candidateId) {
+        Candidate candidate = candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate not found with ID: " + candidateId));
+
+        User candidateUser = candidate.getUser();
+
+        // Fetch the user role (assuming roleId of 1 corresponds to ROLE_USER)
+        Role userRole = roleRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("User role not found in the database."));
+
+        // Reassign the candidate's user role to ROLE_USER
+        candidateUser.setRole(userRole);
+        userRepository.save(candidateUser);
+
+        // Delete the candidate
+        candidateRepository.delete(candidate);
     }
 }

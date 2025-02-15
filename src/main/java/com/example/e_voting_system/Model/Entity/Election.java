@@ -31,7 +31,6 @@ public class Election {
     @Column(nullable = false)
     private ZonedDateTime endDatetime;
 
-
     private String imageUrl;
 
     @ManyToOne
@@ -50,4 +49,7 @@ public class Election {
     @OneToMany(mappedBy = "election")
     private List<Party> parties;
 
+
+    @OneToMany(mappedBy = "election", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 }

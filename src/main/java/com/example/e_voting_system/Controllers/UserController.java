@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 
@@ -83,5 +84,11 @@ public class UserController {
         return ResponseEntity.ok(statistics);
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserDTO>> searchUsersByEmail(@RequestParam String email) {
+        List<UserDTO> users = userService.searchUsersByEmail(email);
+        return ResponseEntity.ok(users);
+    }
 
 }

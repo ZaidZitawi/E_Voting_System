@@ -59,6 +59,7 @@ public class RoleAssignmentService {
 
 
 
+
     @Transactional
     public boolean assignCandidateRoleByEmail(String email, Long electionId) {
         Optional<User> userOptional = userRepository.findByEmail(email);
@@ -84,6 +85,7 @@ public class RoleAssignmentService {
                     candidate.setUser(user);
                     candidate.setElection(election);
 
+
                     candidateRepository.save(candidate); // Save candidate entry
 
                     return true;
@@ -98,6 +100,7 @@ public class RoleAssignmentService {
         }
         return false; // User not found
     }
+
 
     @Transactional
     public void assignCandidatesToParty(Long partyId, List<Long> usersIDs) {

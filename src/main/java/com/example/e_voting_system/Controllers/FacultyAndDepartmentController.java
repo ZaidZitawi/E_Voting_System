@@ -32,6 +32,7 @@ public class FacultyAndDepartmentController {
         return ResponseEntity.ok(faculties);
     }
 
+
     @GetMapping("/all")
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
         List<DepartmentDTO> departments = departmentService.getAllDepartments();

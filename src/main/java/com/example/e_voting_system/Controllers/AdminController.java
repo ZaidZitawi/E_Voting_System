@@ -1,17 +1,17 @@
 package com.example.e_voting_system.Controllers;
 
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
+import com.example.e_voting_system.Model.DTO.ElectionUpdateDTO;
 import com.example.e_voting_system.Model.DTO.PartyDTO;
 import com.example.e_voting_system.Model.DTO.UserDTO;
-import com.example.e_voting_system.Services.CandidateService;
-import com.example.e_voting_system.Services.ElectionService;
-import com.example.e_voting_system.Services.PartyService;
-import com.example.e_voting_system.Services.RoleAssignmentService;
+import com.example.e_voting_system.Services.*;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,16 +22,19 @@ public class AdminController {
     private final RoleAssignmentService roleAssignmentService;
     private final CandidateService candidateService;
     private final PartyService partyService;
+    private final FileUploadService fileUploadService;
 
 
     public AdminController(ElectionService electionService,
                            RoleAssignmentService roleAssignmentService,
                            CandidateService candidateService,
-                           PartyService partyService) {
+                           PartyService partyService,
+                           FileUploadService fileUploadService) {
         this.electionService = electionService;
         this.roleAssignmentService = roleAssignmentService;
         this.candidateService = candidateService;
         this.partyService=partyService;
+        this.fileUploadService = fileUploadService;
     }
 
 
@@ -39,10 +42,17 @@ public class AdminController {
     // POST /elections - Create a new election (Admin only)
     @PostMapping("elections/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ElectionDTO> createElection(@Valid @RequestBody ElectionDTO electionDTO) {
+    public ResponseEntity<ElectionDTO> createElection(
+            @RequestPart("election") @Valid ElectionDTO electionDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            String uploadedFileName = fileUploadService.uploadFile(file, "elections");
+            electionDTO.setImageUrl(uploadedFileName);
+        }
         ElectionDTO createdElection = electionService.createElection(electionDTO);
         return ResponseEntity.ok(createdElection);
     }
+
 
 
     // Step 2: Create the party and assign the PARTY_MANAGER role to the specified user
@@ -78,33 +88,22 @@ public class AdminController {
     }
 
 
-//    //fetch all parties for an election
-//    @GetMapping("elections/{electionId}/parties")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<List<PartyDTO>> getPartiesForElection(@PathVariable Long electionId) {
-//        List<PartyDTO> parties = partyService.getPartiesForElection(electionId);
-//        return ResponseEntity.ok(parties);
-//    }
-//
-//
-//    //fetch all candidates for a party
-//    @GetMapping("parties/{partyId}/candidates")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<List<UserDTO>> getCandidatesForParty(@PathVariable Long partyId) {
-//        List<UserDTO> candidates = candidateService.getCandidatesForParty(partyId);
-//        return ResponseEntity.ok(candidates);
-//    }
-
-
-
     @PutMapping("elections/{electionId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ElectionDTO> updateElection(
             @PathVariable Long electionId,
-            @Valid @RequestBody ElectionDTO electionDTO) {
-        ElectionDTO updatedElection = electionService.updateElection(electionId, electionDTO);
+            @RequestPart("election") @Valid ElectionUpdateDTO electionUpdateDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, IOException {
+
+        if (file != null && !file.isEmpty()) {
+            String uploadedFileName = fileUploadService.uploadFile(file, "elections");
+            electionUpdateDTO.setImageUrl(uploadedFileName);
+        }
+        ElectionDTO updatedElection = electionService.updateElection(electionId, electionUpdateDTO);
         return ResponseEntity.ok(updatedElection);
     }
+
+
 
     @DeleteMapping("elections/{electionId}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -121,12 +120,5 @@ public class AdminController {
         candidateService.deleteCandidate(candidateId);
         return ResponseEntity.ok("Candidate deleted and user role updated successfully.");
     }
-
-
-
-
-
-
-
 
 }

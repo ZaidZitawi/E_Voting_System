@@ -19,4 +19,5 @@ public class ElectionDTO2 {
     private Faculty faculty;
     private Department department;
     private Boolean isActive;
+    private String transactionHash;
 }
