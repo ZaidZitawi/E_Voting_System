@@ -4,6 +4,7 @@ package com.example.e_voting_system.Services;
 import com.example.e_voting_system.Exceptions.ResourceNotFoundException;
 import com.example.e_voting_system.Model.DTO.ElectionDTO;
 import com.example.e_voting_system.Model.DTO.ElectionDTO2;
+import com.example.e_voting_system.Model.DTO.ElectionUpdateDTO;
 import com.example.e_voting_system.Model.Entity.*;
 import com.example.e_voting_system.Model.Mapper.ElectionMapper;
 import com.example.e_voting_system.Repositories.*;
@@ -118,41 +119,41 @@ public class ElectionService {
     }
 
 
-    public ElectionDTO updateElection(Long electionId, ElectionDTO electionDTO) {
+    public ElectionDTO updateElection(Long electionId, ElectionUpdateDTO electionUpdateDTO) {
         Election election = electionRepository.findById(electionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Election not found with ID: " + electionId));
 
         // Update the election fields
-        election.setTitle(electionDTO.getTitle());
-        election.setDescription(electionDTO.getDescription());
-        election.setStartDatetime(electionDTO.getStartDatetime());
-        election.setEndDatetime(electionDTO.getEndDatetime());
-        election.setImageUrl(electionDTO.getImageUrl());
+        election.setTitle(electionUpdateDTO.getTitle());
+        election.setDescription(electionUpdateDTO.getDescription());
+        election.setStartDatetime(electionUpdateDTO.getStartDatetime());
+        election.setEndDatetime(electionUpdateDTO.getEndDatetime());
+        election.setImageUrl(electionUpdateDTO.getImageUrl());
 
         // Update election type
-        if (electionDTO.getTypeId() != null) {
-            ElectionType electionType = electionTypeRepository.findById(electionDTO.getTypeId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Election Type not found with ID: " + electionDTO.getTypeId()));
+        if (electionUpdateDTO.getTypeId() != null) {
+            ElectionType electionType = electionTypeRepository.findById(electionUpdateDTO.getTypeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Election Type not found with ID: " + electionUpdateDTO.getTypeId()));
             election.setType(electionType);
         }
 
         // Update faculty
-        if (electionDTO.getFacultyId() != null) {
-            Faculty faculty = facultyRepository.findById(electionDTO.getFacultyId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with ID: " + electionDTO.getFacultyId()));
+        if (electionUpdateDTO.getFacultyId() != null) {
+            Faculty faculty = facultyRepository.findById(electionUpdateDTO.getFacultyId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with ID: " + electionUpdateDTO.getFacultyId()));
             election.setFaculty(faculty);
         }
 
         // Update department
-        if (electionDTO.getDepartmentId() != null) {
-            Department department = departmentRepository.findById(electionDTO.getDepartmentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Department not found with ID: " + electionDTO.getDepartmentId()));
+        if (electionUpdateDTO.getDepartmentId() != null) {
+            Department department = departmentRepository.findById(electionUpdateDTO.getDepartmentId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Department not found with ID: " + electionUpdateDTO.getDepartmentId()));
             election.setDepartment(department);
         }
 
-        // Update active status
-        if (electionDTO.getIsActive() != null) {
-            election.setIsActive(electionDTO.getIsActive());
+        // Update active status (if used in this update; otherwise you can remove it)
+        if (electionUpdateDTO.getIsActive() != null) {
+            election.setIsActive(electionUpdateDTO.getIsActive());
         }
 
         // Save the updated election
@@ -161,6 +162,7 @@ public class ElectionService {
         // Convert to DTO and return
         return electionMapper.toDTO(updatedElection);
     }
+
 
     public void deleteElection(Long electionId) {
         Election election = electionRepository.findById(electionId)
@@ -246,4 +248,5 @@ public class ElectionService {
         return electionRepository.findElectionIdByCandidateUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Election not found for candidate user ID: " + userId));
     }
+
 }

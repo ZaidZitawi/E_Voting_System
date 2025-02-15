@@ -3,6 +3,7 @@ package com.example.e_voting_system.Controllers;
 import com.example.e_voting_system.Model.DTO.PartyDTO;
 import com.example.e_voting_system.Services.PartyService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,5 +41,22 @@ public class PartyController {
         PartyDTO partyDTO = partyService.getPartyByUserId(userId);
         return ResponseEntity.ok(partyDTO);
     }
+
+
+    @DeleteMapping("/election/{electionId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deletePartiesForElection(@PathVariable Long electionId) {
+        partyService.deletePartiesForElection(electionId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{partyId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deletePartyById(@PathVariable Long partyId) {
+        partyService.deletePartyById(partyId);
+        return ResponseEntity.ok("Party deleted and roles updated successfully.");
+    }
+
 
 }

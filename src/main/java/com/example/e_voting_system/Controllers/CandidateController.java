@@ -5,10 +5,8 @@ import com.example.e_voting_system.Model.DTO.CandidateDTO;
 import com.example.e_voting_system.Model.DTO.CandidateSummaryDTO;
 import com.example.e_voting_system.Services.CandidateService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,6 +43,13 @@ public class CandidateController {
     public ResponseEntity<CandidateDTO> getCandidateByUserId(@PathVariable Long userId) {
         CandidateDTO candidateDTO = candidateService.getCandidateByUserId(userId);
         return ResponseEntity.ok(candidateDTO);
+    }
+
+    @DeleteMapping("/{candidateId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteCandidateById(@PathVariable Long candidateId) {
+        candidateService.deleteCandidateById(candidateId);
+        return ResponseEntity.ok("Candidate deleted and user role updated successfully.");
     }
 
 }

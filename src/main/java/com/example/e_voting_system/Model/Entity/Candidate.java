@@ -26,8 +26,4 @@ public class Candidate {
     @JoinColumn(name = "party_id", nullable = false)
     private Party party;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role candidateRole;
-
 }
