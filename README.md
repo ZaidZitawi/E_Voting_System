@@ -95,18 +95,23 @@ This project is an **E-Voting System** that leverages **Blockchain Technology** 
 
 ## Technologies Used
 
-- **Backend**: Spring Boot (Java)
-- **Frontend (Mobile App)**: React Native
+- **Backend**: Spring Boot
+- **Frontend (Mobile App)**: Flutter
 - **Frontend (Admin Web Platform)**: React.js
 - **Database**: Postgresql
-- **Blockchain**: Ethereum (using Web3j library)
+- **Blockchain**: Amoy testnet "Polygon": Web3j & web3.js libraries
 - **Authentication**: JWT Tokens
 - **Security**: Spring Security
 - **Others**:
   - Hibernate (ORM)
   - Maven (Build Tool)
-  - Docker (Containerization)
   - Git & GitHub (Version Control)
+  - Java Mail Sender
+  - Firebase push Notifications service
+  - Spring local hosting for images and media
+  -  MapStruct for handling object mapping
+  -   
+  
 
 ---
 
@@ -119,62 +124,6 @@ The system follows a **Client-Server Architecture** with separate frontends for 
 - **API Server**: Handles all business logic and database interactions.
 - **Blockchain Network**: Records votes and election results for integrity.
 
----
-
-## Database Schema
-
-The database schema includes tables for:
-
-- **Users**
-- **Roles**
-- **Faculties**
-- **Departments**
-- **Elections**
-- **Election Types**
-- **Candidates**
-- **Posts**
-- **Comments**
-- **Likes**
-- **Votes**
-- **Notifications**
-
----
-
-## API Endpoints
-
-### General User Endpoints
-
-- **POST** `/api/auth/register` - Register a new user.
-- **POST** `/api/auth/verify-email` - Verify user email.
-- **POST** `/api/auth/login` - User login.
-- **GET** `/api/elections` - Get list of elections.
-- **GET** `/api/elections/{id}` - Get election details.
-- **GET** `/api/elections/search` - Search elections.
-- **GET** `/api/users/{id}` - Get user profile.
-- **PUT** `/api/users/{id}` - Update user profile.
-- **POST** `/api/elections/{id}/vote` - Cast a vote.
-- **GET** `/api/elections/{id}/results/blockchain` - Get blockchain results.
-
-### Candidate Endpoints
-
-- **POST** `/api/candidates/{id}/posts` - Create campaign post.
-- **GET** `/api/candidates/{id}/engagement` - View engagement metrics.
-- **PUT** `/api/candidates/{id}` - Update candidate profile.
-
-### Admin Endpoints
-
-- **POST** `/api/admin/auth/login` - Admin login.
-- **POST** `/api/admin/elections` - Create election.
-- **PUT** `/api/admin/elections/{id}` - Update election.
-- **DELETE** `/api/admin/elections/{id}` - Delete election.
-- **POST** `/api/admin/elections/{id}/candidates` - Assign candidate.
-- **DELETE** `/api/admin/candidates/{id}` - Disqualify candidate.
-- **GET** `/api/admin/candidates/{id}/activity` - View candidate activity.
-- **DELETE** `/api/admin/posts/{id}` - Remove candidate post.
-- **POST** `/api/admin/notifications` - Send notifications.
-- **POST** `/api/admin/elections/{id}/store-results` - Store results on blockchain.
-
----
 
 ## Installation and Setup
 
@@ -184,9 +133,7 @@ The database schema includes tables for:
 - **Node.js** (for frontend applications)
 - **Postgresql** Database
 - **Maven** Build Tool
-- **Docker** (optional, for containerization)
 
-### Backend Setup
 
 1. **Clone the repository**
 
